@@ -15,21 +15,21 @@ d3.json(queryUrl).then(function (data) {
       layer.bindPopup(`<h3>${feature.properties.place}</h3><hr><p>${new Date(feature.properties.time)}</p>`);
     }
     // Change the color of the circlemarkers
-    function getColor(depth) {
-        let d = depth.feature.geometry.coordinates[2]
-        if (depth < 10) {
+    function getColor(feature) {
+        let d = feature.geometry.coordinates[2]
+        if (d < 10) {
             color = "green";
           }
-          else if (depth <= 30) {
+          else if (d <= 30) {
             color = "yellow";
           }
-          else if (depth <= 50) {
+          else if (d <= 50) {
             color = "orange";
           }
-          else if (depth <= 70) {
+          else if (d <= 70) {
             color = "red"; 
           }
-          else if (depth <= 90) {
+          else if (d <= 90) {
             color = "darkred";
           }
           else {
@@ -37,22 +37,24 @@ d3.json(queryUrl).then(function (data) {
           }
           return color;
         }
-    }
+    
 
     // Create a GeoJSON layer that contains the features array on the earthquakeData object.
     // Run the onEachFeature function once for each piece of data in the array.
     var earthquakes = L.geoJSON(earthquakeData, {
     onEachFeature: onEachFeature,
     pointToLayer: function(feature, coordinates) {
-        return L.circleMarker(coordinates)
-    },
-    color: getColor(feature.geometry.coordinates[2]),
-
+        return L.circleMarker(coordinates, {
+            color: getColor(feature)
+        });
+      }
     });
-
+  
  // Send our earthquakes layer to the createMap function/
  createMap(earthquakes);
+  }
 
+  function createMap(earthquakes) {
  // Create the base layers.
  var street = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -108,5 +110,5 @@ d3.json(queryUrl).then(function (data) {
 // Add legend to map
 legend.addTo(myMap);
 
-
+  }
 //Acknowledgement that code source for creating the map was found in Day 1 Activities in Module 15 
